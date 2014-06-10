@@ -1285,11 +1285,15 @@ Note<o:p></o:p></span></u></b></p>
 <p class=MsoNormal style='text-align:justify;text-justify:inter-ideograph'><span
 style='font-size:18.0pt'>This project was borne out of my frustration to
 partition and visualize very large meshes using <span class=SpellE>OpenFOAM</span><sup>&copy;</sup>
-and SU<sup>2</sup> CFD solver. They inherently use serial partitioning as they
-lack parallel file I/O. Using <span class=SpellE>OpenFUSE</span> it is possible
-to convert 1B cells meshes and partition it in distributed parallel in under
-60s. The frustration is shared by many of my other colleagues in the community.
-Hence, keeping all this in mind converters for <span class=SpellE>OpenFOAM</span>
+and SU<sup>2</sup> CFD solver. They inherently use serial partitioning due to the
+lack parallel file I/O support and a parallel distributed mesh database. Using 
+<span class=SpellE>OpenFUSE</span> it is possible
+to convert meshes bigger than 1B cells and perform distributed parallel partitioning
+of the meshes in under 
+60s. Moreover, it is not necessary to store paritioned meshes and using parallel 
+I/O it is possible to write the solution to one global file. Since many of my other colleagues in the community
+share the same frustration,
+I have created converters for <span class=SpellE>OpenFOAM</span>
 and SU<sup>2</sup> are available to output partitioned meshes. A direct API
 access to <span class=SpellE>OpenFOAM&#39;s</span> parallel <span class=SpellE><b
 style='mso-bidi-font-weight:normal'>fvMesh</b></span> via <span class=SpellE>OpenFUSE</span>
