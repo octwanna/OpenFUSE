@@ -1,6 +1,10 @@
-#ifndef COBALT_H
+/*! \file cobalt.hpp
+ ** The cobalt mesh file interface for conversion into hum file format
+ **/
+ 
+#ifndef COBALT_HPP
 
-#define COBALT_H
+#define COBALT_HPP
 
 #include "ohstream.hpp"
 #include <fstream>
