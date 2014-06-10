@@ -1,9 +1,9 @@
-/*! \brief faceStreamer.h
+/*! \brief faceStreamer.hpp
  **
  */
-#ifndef FACE_STREAMER_H
+#ifndef FACE_STREAMER_HPP
 
-#define FACE_STREAMER_H
+#define FACE_STREAMER_HPP
 
 #include "ihstream.hpp"
 #include <vector>
