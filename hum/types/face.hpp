@@ -1,10 +1,10 @@
-/*! \file face.h
+/*! \file face.hpp
  **       The header file containing the basic
  **       mesh entity shape face
  **/
-#ifndef FACE_ENTITY_H
+#ifndef FACE_ENTITY_HPP
 
-#define FACE_ENTITY_H
+#define FACE_ENTITY_HPP
 
 #include<algorithm>
 
