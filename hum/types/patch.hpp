@@ -1,10 +1,10 @@
-/*! \file patch.h
+/*! \file patch.hpp
  **       The header file containing the basic
  **       mesh boundary patch types
  **/
-#ifndef PATCH_ENTITY_H
+#ifndef PATCH_ENTITY_HPP
 
-#define PATCH_ENTITY_H
+#define PATCH_ENTITY_HPP
 
 #include<map>
 #include<string>
