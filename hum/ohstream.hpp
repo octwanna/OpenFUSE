@@ -1,6 +1,11 @@
-/*! \file ohstream.h
- **       hum output file stream class
+/*! \file ohstream.hpp
+ **  The output file manipulation routines/class. It is used by
+ ** all mesh converters and does not require the existence of a
+ ** file. Remember this does not contain file reading routines.
+ ** For all purposes other than mesh import into HUM format use
+ ** the ihstream header file.
  **/
+ 
 #ifndef OHSTREAM_HPP
 
 #define OHSTREAM_HPP
