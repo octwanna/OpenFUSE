@@ -7,7 +7,7 @@
 
 #define CELL_cellDIMM_H
 
-namespace FUSE {
+namespace OF {
 
   template<typename floatT, typename uintT, typename HashFun>
   class cellDIMM {

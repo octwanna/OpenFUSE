@@ -1,5 +1,5 @@
-#include "dimm.h"
-#include "dd/rr_dist.hpp"
+#include "dimm.hpp"
+#include "rr_dist.hpp"
 
 /// Main program
 int main( int nargs, char *args[] ) {

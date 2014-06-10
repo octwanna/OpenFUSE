@@ -8,7 +8,7 @@
 #include<mpi.h>
 #include<vector>
 
-namespace FUSE {
+namespace OF {
 
   /*! \brief Unstructured Communication Schedule **/
   template<typename uintT>
