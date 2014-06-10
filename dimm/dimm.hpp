@@ -1,9 +1,9 @@
-/*! \file DIMM.h
+/*! \file dimm.hpp
  ** \brief Distributed in memory mesh
 **/
-#include "ihstream.h"
-#include "DD/DD.h"
-#include "timing.h"
+#include "ihstream.hpp"
+#include "dd/dd.hpp"
+#include "timing.hpp"
 #include <fstream>
 
 #ifndef DIMM_H

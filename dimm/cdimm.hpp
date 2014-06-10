@@ -1,7 +1,7 @@
 /*! \file cellcellDIMM.h
  ** \brief Distributed in memory mesh with cell info
 **/
-#include "cellDIMM.h"
+#include "cdimm.hpp"
 
 #ifndef CELL_cellDIMM_H
 
