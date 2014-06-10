@@ -1,9 +1,9 @@
-/*! \brief faceLeftRightStreamer.h
+/*! \brief faceLeftRightStreamer.hpp
  **
  */
-#ifndef FACE_LEFT_RIGHT_STREAMER_H
+#ifndef FACE_LEFT_RIGHT_STREAMER_HPP
 
-#define FACE_LEFT_RIGHT_STREAMER_H
+#define FACE_LEFT_RIGHT_STREAMER_HPP
 
 #include "ihstream.hpp"
 #include <vector>
