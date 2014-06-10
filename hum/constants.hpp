@@ -1,5 +1,5 @@
 /*! \file constants.hpp
- **
+ ** Header file to define the constants used in the hum library
  **/
 
 #ifndef CONSTS_H
