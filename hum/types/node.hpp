@@ -1,10 +1,10 @@
-/*! \file node.h
+/*! \file node.hpp
  **       The header file containing the basic
  **       mesh entity shape face
  **/
-#ifndef NODE_ENTITY_H
+#ifndef NODE_ENTITY_HPP
 
-#define NODE_ENTITY_H
+#define NODE_ENTITY_HPP
 
 #include<limits>
 #include<cmath>
