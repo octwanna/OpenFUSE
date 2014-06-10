@@ -1,3 +1,9 @@
+/*! \file constants.cpp
+ ** Implementation file for constants.hpp. Remember this need to be put in the
+ ** compile of every executable using hum. Globally defining this in the 
+ ** constants.hpp will create a symbol duplication error.
+ **/
+ 
 #include "constants.hpp"
 
 namespace hum {
