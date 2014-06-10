@@ -1,9 +1,9 @@
-/*! \brief nodeStreamer.h
+/*! \brief nodeStreamer.hpp
  **
  */
-#ifndef NODE_STREAMER_H
+#ifndef NODE_STREAMER_HPP
 
-#define NODE_STREAMER_H
+#define NODE_STREAMER_HPP
 
 #include "ihstream.h"
 #include<vector>
