@@ -1,6 +1,9 @@
 /*! \file ihstream.hpp
- **       
+ ** Input file interface for HUM mesh files. It can also write to the files 
+ ** based on user parameter passed but it requires the existence of a HUM mesh
+ ** file. The stream interface uses this header file.
  **/
+ 
 #ifndef IHSTREAM_HPP
 
 #define IHSTREAM_HPP
