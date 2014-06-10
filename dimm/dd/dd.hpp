@@ -1,15 +1,15 @@
-/** \file DD.h
+/** \file dd.hpp
 **        Distributed Directory structre using hash tables
 **/
 #ifndef DISTRIBUTED_DIRECTORY_H
 
 #define DISTRIBUTED_DIRECTORY_H
 
-#include "persistentMPI.h"
-#include "DDCommPlan.h"
+#include "pmpi.hpp"
+#include "plan.hpp"
 #include <vector>
 
-namespace FUSE {
+namespace OF {
 
   /// The distributed directory class
   template<typename T, typename uintT, typename HashFun>

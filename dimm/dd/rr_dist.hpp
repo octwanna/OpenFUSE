@@ -1,4 +1,4 @@
-/*! \file roundRobin.h
+/*! \file rr_dist.hpp
 **  \brief A round robin distribution class
 */
 #ifndef ROUND_ROBIN_H
