@@ -1,6 +1,8 @@
 /*! \file sfc.hpp
- **  \brief 
+ ** The Space Filling Curve re-ordering routines for HUM files.
+ ** Both serial and parallel mesh ordering tools use these routines. 
  **/
+
 #ifndef SFC_HPP
 
 #define SFC_HPP
