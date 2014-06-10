@@ -1,3 +1,10 @@
+/*! \file h5p++.hpp
+ ** A standalone C++ header only library for accessing HDF5 functions
+ ** in a type independent manner using templates. It eases reading and
+ ** writing to HDF5 files by providing a uniform interface regardless 
+ ** of the data-type.
+ **/
+ 
 #ifndef H5PP_H
 
 #define H5PP_H
