@@ -1,10 +1,10 @@
-/*! \file cell.h
+/*! \file cell.hpp
  **       The header file containing the basic
  **       mesh entity shape cell
  **/
-#ifndef CELL_ENTITY_H
+#ifndef CELL_ENTITY_HPP
 
-#define CELL_ENTITY_H
+#define CELL_ENTITY_HPP
 
 /*! \brief Cell entity of the mesh
  **        Contains the face IDs
