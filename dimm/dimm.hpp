@@ -13,12 +13,12 @@
 namespace OF {
 
   template<typename floatT, typename uintT, typename HashFun>
-  class DIMM {
+  class dimm {
     public:
     /// \brief Empty Constructor
-    DIMM();
+    dimm();
     /// \brief Hub Constructor
-    DIMM( const char *hub_file, MPI_Comm &comm );
+    dimm( const char *hub_file, MPI_Comm &comm );
 
     protected:
     /// HUB handle
@@ -26,11 +26,11 @@ namespace OF {
     /// The mpi communicator
     MPI_Comm _mpi_comm;
     /// The mesh face-nodes DD
-    DD< face<uintT>, uintT, HashFun > _face_dd;
+    dd< face<uintT>, uintT, HashFun > _face_dd;
     /// The mesh face-LR DD
-    DD< leftRight<uintT>, uintT, HashFun > _face_lr_dd;
+    dd< leftRight<uintT>, uintT, HashFun > _face_lr_dd;
     /// The mesh node distribution
-    DD< node<floatT>, uintT, HashFun > _node_dd;
+    dd< node<floatT>, uintT, HashFun > _node_dd;
     /// The cell hash function
     HashFun _cell_hash;
     /// Face communicator objects
@@ -46,8 +46,8 @@ namespace OF {
 
   /// Class Implementation
   template<typename floatT, typename uintT, typename HashFun>
-  DIMM<floatT, uintT, HashFun>
-  ::DIMM( const char *hub_file, MPI_Comm &comm )
+  dimm<floatT, uintT, HashFun>
+  ::dimm( const char *hub_file, MPI_Comm &comm )
   : _hub_in( hub_file, comm ),
     _mpi_comm( comm ),
     _face_dd( _hub_in.nFace(), comm ),
@@ -76,11 +76,11 @@ namespace OF {
 
   /// Class Implementation
   template<typename floatT, typename uintT, typename HashFun>
-  void DIMM<floatT, uintT, HashFun>
+  void dimm<floatT, uintT, HashFun>
   ::ReadNodeDataHUB()
   {
     /// Node coordinates
-    _hub_in.Read< node<floatT>, H5TNode<floatT> >
+    _hub_in.read< node<floatT>, H5TNode<floatT> >
     (
       &_node_dd[0],
       _node_dd.Start(), 
@@ -89,18 +89,18 @@ namespace OF {
   }
  
   template<typename floatT, typename uintT, typename HashFun>
-  void DIMM<floatT, uintT, HashFun>
+  void dimm<floatT, uintT, HashFun>
   ::ReadFaceDataHUB()
   {
     /// Face Left/Right cell info
-    _hub_in.Read< leftRight<uintT>, H5TLeftRight<uintT> >
+    _hub_in.read< leftRight<uintT>, H5TLeftRight<uintT> >
     (
       &_face_lr_dd[0],
       _face_lr_dd.Start(), 
       1, _face_lr_dd.Size()
     );
     /// Face Node info
-    _hub_in.Read< face<uintT>, H5TFace<uintT> >
+    _hub_in.read< face<uintT>, H5TFace<uintT> >
     (
       &_face_dd[0],
       _face_dd.Start(), 
@@ -116,7 +116,7 @@ namespace OF {
   }
  
   template<typename floatT, typename uintT, typename HashFun>
-  void DIMM<floatT, uintT, HashFun>
+  void dimm<floatT, uintT, HashFun>
   ::FacePlanUsingFaceLR( DDCommPlan<uintT> &face_plan )
   {
     face_plan.Resize( _face_lr_dd.Size() );
@@ -157,10 +157,10 @@ namespace OF {
   }
  
   template<typename floatT, typename uintT, typename HashFun>
-  void DIMM<floatT, uintT, HashFun>
+  void dimm<floatT, uintT, HashFun>
   ::CloseHUBFile()
   {
-    _hub_in.Close();
+    _hub_in.close();
   }
  
 } // End of FUSE namespace

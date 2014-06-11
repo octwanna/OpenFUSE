@@ -13,12 +13,12 @@ namespace OF {
 
   /// The distributed directory class
   template<typename T, typename uintT, typename HashFun>
-  class DD : public HashFun {
+  class dd : public HashFun {
     public:
     /// No constructor
-    DD();
+    dd();
     /// First constructor using MPI comm
-    DD( size_t size, MPI_Comm &comm );
+    dd( size_t size, MPI_Comm &comm );
     /// Access operator
     inline T &operator[]( size_t id );
     /// Form the recv schedule given the send schedule
@@ -55,22 +55,22 @@ namespace OF {
 
   /// Class implementation
   template<typename T, typename uintT, typename HashFun>
-  DD<T, uintT, HashFun>
-  ::DD( size_t size, MPI_Comm &comm )
+  dd<T, uintT, HashFun>
+  ::dd( size_t size, MPI_Comm &comm )
   : HashFun( size, comm ),
     _data( this->Size() ),
     _mpi_comm(comm)
   { /* empty */ }
 
   template<typename T, typename uintT, typename HashFun>
-  T &DD<T, uintT, HashFun>
+  T &dd<T, uintT, HashFun>
   ::operator[]( size_t id )
   {
     return _data[id];
   }
 
   template<typename T, typename uintT, typename HashFun>
-  void DD<T, uintT, HashFun>
+  void dd<T, uintT, HashFun>
   ::SendSchedFromRecvSched( DDCommPlan<uintT> &plan )
   {
     assert( plan.isEmpty() );
@@ -127,7 +127,7 @@ namespace OF {
   }
 
   template<typename T, typename uintT, typename HashFun>
-  void DD<T, uintT, HashFun>
+  void dd<T, uintT, HashFun>
   ::RecvSchedFromSendSched( DDCommPlan<uintT> &plan )
   {
     assert( plan.isEmpty() );
@@ -139,7 +139,7 @@ namespace OF {
   /// Read elements from DD using list
   template<typename T, typename uintT, typename HashFun>
   template<typename ListT>
-  void DD<T, uintT, HashFun>
+  void dd<T, uintT, HashFun>
   ::Read( ListT &list, T *recv )
   {
     DDCommPlan<uintT> plan( this->CommSize() );
@@ -150,7 +150,7 @@ namespace OF {
   /// Read elements from DD using list
   template<typename T, typename uintT, typename HashFun>
   template<typename ListT>
-  void DD<T, uintT, HashFun>
+  void dd<T, uintT, HashFun>
   ::Read( ListT &list, std::vector<T> &recv )
   {
 
@@ -158,7 +158,7 @@ namespace OF {
 
   /// Read elements from DD using plan
   template<typename T, typename uintT, typename HashFun>
-  void DD<T, uintT, HashFun>
+  void dd<T, uintT, HashFun>
   ::Read( DDCommPlan<uintT> &plan, T *recv )
   {
 
@@ -166,7 +166,7 @@ namespace OF {
 
   /// Read elements from DD using plan
   template<typename T, typename uintT, typename HashFun>
-  void DD<T, uintT, HashFun>
+  void dd<T, uintT, HashFun>
   ::Read( DDCommPlan<uintT> &plan, std::vector<T> &recv )
   {
 
@@ -174,7 +174,7 @@ namespace OF {
 
   template<typename T, typename uintT, typename HashFun>
   template<typename ListT>
-  void DD<T, uintT, HashFun>
+  void dd<T, uintT, HashFun>
   ::ListToPlan( ListT &list, DDCommPlan<uintT> &plan )
   {
     assert( plan.isEmpty() );
@@ -189,7 +189,7 @@ namespace OF {
   }
 
   template<typename T, typename uintT, typename HashFun>
-  void DD<T, uintT, HashFun>
+  void dd<T, uintT, HashFun>
   ::SetupMigrate
   (
     DDCommPlan<uintT> &plan,
