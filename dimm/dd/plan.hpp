@@ -12,29 +12,29 @@ namespace OF {
 
   /*! \brief Unstructured Communication Schedule **/
   template<typename uintT>
-  class DDCommPlan {
+  class dd_plan {
     public:
     /// Empty Constructor
-    DDCommPlan();
+    dd_plan();
     /// Default Constructor
-    DDCommPlan( int nprocs );
+    dd_plan( int nprocs );
     /// Allocate
-    void Resize( int nprocs );
+    void resize( int nprocs );
     /// Clear contents
-    void Clear();
+    void clear();
     /// Clear only the send/recv list 
-    void ClearList();
+    void clear_list();
     /// Swap the send/recv schedules
-    void Swap();
+    void swap();
     /// Checks if plan is empty
-    bool isEmpty();
+    bool is_empty();
     /******* Data access functions ********/
-    std::vector<uintT> &SendList();
-    std::vector<uintT> &RecvList();
-    std::vector<int> &SendOffsets();
-    std::vector<int> &RecvOffsets();
-    std::vector<int> &SendProcs();
-    std::vector<int> &RecvProcs();
+    std::vector<uintT> &send_list();
+    std::vector<uintT> &recv_list();
+    std::vector<int> &send_offsets();
+    std::vector<int> &recv_offsets();
+    std::vector<int> &send_procs();
+    std::vector<int> &recv_procs();
   
     private:
     /// Send Schedule
@@ -49,15 +49,15 @@ namespace OF {
 
   /***** Class implementation *****/
   template<typename uintT>
-  DDCommPlan<uintT>
-  ::DDCommPlan()
+  dd_plan<uintT>
+  ::dd_plan()
   {
     /* empty */
   }
 
   template<typename uintT>
-  DDCommPlan<uintT>
-  ::DDCommPlan( int nprocs )
+  dd_plan<uintT>
+  ::dd_plan( int nprocs )
   : _send_procs( nprocs, -1 ),
     _send_offsets( nprocs + 1 ),
     _recv_procs( nprocs, -1 ),
@@ -67,8 +67,8 @@ namespace OF {
   }
 
   template<typename uintT>
-  void DDCommPlan<uintT>
-  ::Resize( int nprocs )
+  void dd_plan<uintT>
+  ::resize( int nprocs )
   {
     _send_procs.resize( nprocs, -1 );
     _send_offsets.resize( nprocs + 1 );
@@ -77,8 +77,8 @@ namespace OF {
   }
  
   template<typename uintT>
-  void DDCommPlan<uintT>
-  ::Clear()
+  void dd_plan<uintT>
+  ::clear()
   {
     _send_procs.clear();
     _send_offsets.clear();
@@ -89,8 +89,8 @@ namespace OF {
   }
  
   template<typename uintT>
-  void DDCommPlan<uintT>
-  ::ClearList()
+  void dd_plan<uintT>
+  ::clear_list()
   {
     _send_list.clear();
     _recv_list.clear();
@@ -104,8 +104,8 @@ namespace OF {
   }
  
   template<typename uintT>
-  void DDCommPlan<uintT>
-  ::Swap()
+  void dd_plan<uintT>
+  ::swap()
   {
     _send_list.swap( _recv_list );
     _send_procs.swap( _recv_procs );
@@ -113,8 +113,8 @@ namespace OF {
   }
   
   template<typename uintT>
-  bool DDCommPlan<uintT>
-  ::isEmpty()
+  bool dd_plan<uintT>
+  ::is_empty()
   {
     return !( _send_list.size() == 0 && _recv_list.size() == 0 );
   }
@@ -122,43 +122,43 @@ namespace OF {
   /******* Data access functions ********/
   
   template<typename uintT>
-  std::vector<uintT> &DDCommPlan<uintT>
-  ::SendList()
+  std::vector<uintT> &dd_plan<uintT>
+  ::send_list()
   {
     return _send_list;
   }
   
   template<typename uintT>
-  std::vector<uintT> &DDCommPlan<uintT>
-  ::RecvList()
+  std::vector<uintT> &dd_plan<uintT>
+  ::recv_list()
   {
     return _recv_list;
   }
   
   template<typename uintT>
-  std::vector<int> &DDCommPlan<uintT>
-  ::SendOffsets()
+  std::vector<int> &dd_plan<uintT>
+  ::send_offsets()
   {
     return _send_offsets;
   }
   
   template<typename uintT>
-  std::vector<int> &DDCommPlan<uintT>
-  ::RecvOffsets()
+  std::vector<int> &dd_plan<uintT>
+  ::recv_offsets()
   {
     return _recv_offsets;
   }
   
   template<typename uintT>
-  std::vector<int> &DDCommPlan<uintT>
-  ::SendProcs()
+  std::vector<int> &dd_plan<uintT>
+  ::send_procs()
   {
     return _send_procs;
   }
   
   template<typename uintT>
-  std::vector<int> &DDCommPlan<uintT>
-  ::RecvProcs()
+  std::vector<int> &dd_plan<uintT>
+  ::recv_procs()
   {
     return _recv_procs;
   }

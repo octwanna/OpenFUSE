@@ -20,28 +20,28 @@ class persistentMPI {
   /// \brief Destructor
   ~persistentMPI();
   /// Wait for MPI request to complete
-  void Wait();
+  void wait();
   /// Start the persistent send/recv req
-  void Start();
+  void start();
   /// Clears the persistent MPI requests
-  void FreeReq();
+  void free_reqs();
   ///  Resize the send/recv buffers
   template<typename T>
-  void Resize( size_t counts );
+  void resize( size_t counts );
   ///  Resize the send/recv buffers
   template<typename T>
-  size_t BufSize();
+  size_t size();
   /// Data Access Functions
-  std::vector<MPI_Request> &SendReq();
-  std::vector<MPI_Request> &RecvReq();
-  std::vector<MPI_Status> &SendStat();
-  std::vector<MPI_Status> &RecvStat();
+  std::vector<MPI_Request> &send_reqs();
+  std::vector<MPI_Request> &recv_reqs();
+  std::vector<MPI_Status> &send_stats();
+  std::vector<MPI_Status> &recv_stats();
   /// Get the send buffer as a type T array
   template<typename T>
-  inline T *SendBuf();
+  inline T *send_buf();
   /// Get the send buffer as a type T array
   template<typename T>
-  inline T *RecvBuf();
+  inline T *recv_buf();
   
   private: 
   /// MPI_Request objects
@@ -68,11 +68,11 @@ persistentMPI
 
 persistentMPI
 ::~persistentMPI() {
-  FreeReq();
+  free_reqs();
 } 
 
 void persistentMPI
-::Wait()
+::wait()
 {
   /// Recv Request
   for( unsigned i = 0; i < _recv_req.size(); ++i )
@@ -85,7 +85,7 @@ void persistentMPI
 }
 
 void persistentMPI
-::Start()
+::start()
 {
   /// Recv Request
   for( unsigned i = 0; i < _recv_req.size(); ++i )
@@ -98,7 +98,7 @@ void persistentMPI
 }
 
 void persistentMPI
-::FreeReq()
+::free_reqs()
 {
   /// Recv Request
   for( unsigned i = 0; i < _recv_req.size(); ++i )
@@ -111,32 +111,32 @@ void persistentMPI
 }
 
 std::vector<MPI_Request> &persistentMPI
-::SendReq()
+::send_reqs()
 {
   return _send_req;
 }
 
 std::vector<MPI_Request> &persistentMPI
-::RecvReq()
+::recv_reqs()
 {
   return _recv_req;
 }
 
 std::vector<MPI_Status> &persistentMPI
-::SendStat()
+::send_stats()
 {
   return _send_stat;
 }
 
 std::vector<MPI_Status> &persistentMPI
-::RecvStat()
+::recv_stats()
 {
   return _recv_stat;
 }
 
 template<typename T>
 void persistentMPI
-::Resize( size_t counts ) {
+::resize( size_t counts ) {
   if( counts * sizeof(T) > _buf.size() )
     _buf.resize( counts * sizeof(T) );
   if( _buf.size() != 0 && counts == 0 ) 
@@ -145,19 +145,19 @@ void persistentMPI
 
 template<typename T>
 size_t persistentMPI
-::BufSize() {
+::size() {
   return _buf.size() / sizeof(T);
 }
 
 template<typename T>
 T *persistentMPI
-::SendBuf() {
+::send_buf() {
   return reinterpret_cast<T *>(&_buf[0]);
 } 
 
 template<typename T>
 T *persistentMPI
-::RecvBuf() {
+::recv_buf() {
   return reinterpret_cast<T *>(&_buf[0]);
 } 
 

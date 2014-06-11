@@ -10,15 +10,15 @@
 
 namespace OF {
 
-  class MPITiming {
+  class mpi_time {
 
     public:
     /// Default constructor
-    MPITiming( MPI_Comm &comm );
+    mpi_time( MPI_Comm &comm );
     /// Start the timer
-    void Start();
+    void start();
     /// Stop the timer
-    double Stop();
+    double stop();
 
     private:
     MPI_Comm &_comm;
@@ -27,21 +27,21 @@ namespace OF {
   };
 
   /// Class implementation
-  MPITiming
-  ::MPITiming( MPI_Comm &comm )
+  mpi_time
+  ::mpi_time( MPI_Comm &comm )
   : _comm( comm )
   {
     gettimeofday(&_begin, NULL);
   }
 
-  void MPITiming
-  ::Start()
+  void mpi_time
+  ::start()
   {
     gettimeofday(&_begin, NULL);
   }
 
-  double MPITiming
-  ::Stop()
+  double mpi_time
+  ::stop()
   {
     gettimeofday(&_end, NULL);
     double max_elapsed,
