@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tools usage &mdash; OpenFUSE v1.0</title>
+    
+    <link rel="stylesheet" href="_static/traditional.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="OpenFUSE v1.0" href="index.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">OpenFUSE v1.0</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="figure">
+<img alt="_images/logo_medium.png" src="_images/logo_medium.png" />
+</div>
+<div class="section" id="tools-usage">
+<h1>Tools usage<a class="headerlink" href="#tools-usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="cobalttohum-tool">
+<h2>cobaltToHum tool<a class="headerlink" href="#cobalttohum-tool" title="Permalink to this headline">¶</a></h2>
+<p>The cobaltToHum tool is used to convert meshes stored in the COBALT CFD solver file format to the native
+Hierarchical Ustructred Mesh (HUM) format of OpenFUSE. The usage of the program can be obtained by passing
+the &#8220;&#8211;help&#8221; or &#8220;-h&#8221; command line parameter to the executable.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="o">./</span><span class="n">cobaltToHum</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+<p>This utility uses the serial stream interface of OpenFUSE, i.e., it is a memory scalable converter.
+It is possible to convert meshes larger than 1B cells on a laptop in few hours, even though the
+RAM is not sufficient to store the complete mesh. The mesh is processed as a data stream and written to
+the HUM file format and the size of the stream in any point in time is much lesser then the available RAM.
+As a matter of fact the user can set the memory size of the stream, but we advice the converter to
+automatically determine the stream size.</p>
+</div>
+<div class="section" id="oftohum-tool">
+<h2>ofToHum tool<a class="headerlink" href="#oftohum-tool" title="Permalink to this headline">¶</a></h2>
+<p>The ofToHum tool is used to convert OpenFOAM meshes to native HUM file format. When you run this tool
+make sure you are in the root case folder. This tool as is based on the serial stream interface. The usage
+can be obtained by passing the &#8220;&#8211;help&#8221; or &#8220;-h&#8221; command line parameter to the executable.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="o">./</span><span class="n">ofToHum</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="orderhum-tool">
+<h2>orderHum tool<a class="headerlink" href="#orderhum-tool" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             >previous</a> |</li>
+        <li><a href="index.html">OpenFUSE v1.0</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Pavanakumar Mohanamuraly.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

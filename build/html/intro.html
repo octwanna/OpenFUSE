@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &mdash; OpenFUSE v1.0</title>
+    
+    <link rel="stylesheet" href="_static/traditional.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="OpenFUSE v1.0" href="index.html" />
+    <link rel="next" title="Installation" href="install.html" />
+    <link rel="prev" title="OpenFUSE Home page" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="OpenFUSE Home page"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">OpenFUSE v1.0</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="figure">
+<img alt="_images/logo_medium.png" src="_images/logo_medium.png" />
+</div>
+<div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/mind_map.png"><img alt="_images/mind_map.png" src="_images/mind_map.png" style="width: 70%;" /></a>
+</div>
+<p>OpenFUSE is a software framework, which supports various
+numerical algorithms to solve Partial Differential Equations (PDEs) on
+unstructured meshes. Unlike other software frameworks, OpenFUSE
+provides only the bare minimum data and functions required to implement any
+type of numerical solvers. OpenFUSE does not by
+itself support any particular type of numerical method viz., finite volume,
+finite element or discontinuous Galerkin. It only
+supplies the necessary mesh data-structure and access to inter-processor data
+using a novel in-memory mesh database system called &#8220;dimm&#8221;.
+It even supplies its own distributed parallel mesh partitioner.
+All algorithms used in OpenFUSE are extremely scalable and has the
+following key features required for efficient numerical solutions to PDEs.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Unstructured mesh file format based on HDF5 geared for parallel I/O and non-linear elements</li>
+<li>Scalable mesh conversion (from other formats)</li>
+<li>Parallel distributed mesh decomposition</li>
+<li>Parallel adaptive mesh refinement</li>
+<li>Parallel visualization using plugins for VisIT and paraview</li>
+<li>Abstract operator and container</li>
+<li>Distributed Graph Algorithms</li>
+</ul>
+</div></blockquote>
+<p>Most of the components like parallel mesh decomposition, adaptation and distributed graphs algorithms have been communicated to peer review journals, hence the source code for the same is withheld. They will be released once published, nevertheless the file format and serial conversion tools are available.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This project was borne out of my frustration to partition and visualize very large meshes using OpenFOAM and SU2 CFD solver. They inherently use serial partitioning due to the lack of parallel - I/O, and mesh query. Using OpenFUSE it is possible to convert meshes bigger than 1B cells and perform distributed parallel partitioning of the meshes in under 60s. Moreover, it is not necessary to store paritioned meshes as it is simple to write the solution to one global file using parallel I/O. Since many of my other colleagues in the community share the same frustration, I have created converters for OpenFOAM and SU2 to output partitioned meshes. A direct API access to OpenFOAM parallel fvMesh class is under development. The mesh adaptation in OpenFUSE at present cannot handle hanging nodes and works only on tetrahedral meshes.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="OpenFUSE Home page"
+             >previous</a> |</li>
+        <li><a href="index.html">OpenFUSE v1.0</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Pavanakumar Mohanamuraly.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
