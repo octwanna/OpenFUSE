@@ -6,7 +6,7 @@
 #define DISTRIBUTED_DIRECTORY_H
 
 #include "pmpi.hpp"
-#include "plan.hpp"
+#include "dd_plan.hpp"
 #include <vector>
 
 namespace ofuse {
