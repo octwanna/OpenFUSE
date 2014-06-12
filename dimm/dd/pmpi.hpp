@@ -1,4 +1,4 @@
-/*! \file persistentMPI.h
+/*! \file pmpi.hpp
 **
 **/
 #ifndef PERSISTENT_MPI_H
