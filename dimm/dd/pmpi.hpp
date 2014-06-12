@@ -11,14 +11,14 @@
 /*! \brief All persistent MPI related stuff goes here like 
 **         the send/recv buffers, mpi requests and stats
 */
-class persistentMPI {
+class pmpi {
   public:
   /// \brief Empty
-  persistentMPI();
+  pmpi();
   /// \brief Default
-  persistentMPI( int nprocs );
+  pmpi( int nprocs );
   /// \brief Destructor
-  ~persistentMPI();
+  ~pmpi();
   /// Wait for MPI request to complete
   void wait();
   /// Start the persistent send/recv req
@@ -56,8 +56,8 @@ class persistentMPI {
 
 };
 
-persistentMPI
-::persistentMPI( int nprocs )
+pmpi
+::pmpi( int nprocs )
 :_send_req( nprocs, MPI_REQUEST_NULL ),
  _recv_req( nprocs, MPI_REQUEST_NULL ),
  _send_stat( nprocs ),
@@ -66,12 +66,12 @@ persistentMPI
 
 }
 
-persistentMPI
-::~persistentMPI() {
+pmpi
+::~pmpi() {
   free_reqs();
 } 
 
-void persistentMPI
+void pmpi
 ::wait()
 {
   /// Recv Request
@@ -84,7 +84,7 @@ void persistentMPI
       MPI_Wait( &_send_req[i], &_send_stat[i] );
 }
 
-void persistentMPI
+void pmpi
 ::start()
 {
   /// Recv Request
@@ -97,7 +97,7 @@ void persistentMPI
       MPI_Start( &_send_req[i] );
 }
 
-void persistentMPI
+void pmpi
 ::free_reqs()
 {
   /// Recv Request
@@ -110,32 +110,32 @@ void persistentMPI
       MPI_Request_free( &_send_req[i] );
 }
 
-std::vector<MPI_Request> &persistentMPI
+std::vector<MPI_Request> &pmpi
 ::send_reqs()
 {
   return _send_req;
 }
 
-std::vector<MPI_Request> &persistentMPI
+std::vector<MPI_Request> &pmpi
 ::recv_reqs()
 {
   return _recv_req;
 }
 
-std::vector<MPI_Status> &persistentMPI
+std::vector<MPI_Status> &pmpi
 ::send_stats()
 {
   return _send_stat;
 }
 
-std::vector<MPI_Status> &persistentMPI
+std::vector<MPI_Status> &pmpi
 ::recv_stats()
 {
   return _recv_stat;
 }
 
 template<typename T>
-void persistentMPI
+void pmpi
 ::resize( size_t counts ) {
   if( counts * sizeof(T) > _buf.size() )
     _buf.resize( counts * sizeof(T) );
@@ -144,19 +144,19 @@ void persistentMPI
 }
 
 template<typename T>
-size_t persistentMPI
+size_t pmpi
 ::size() {
   return _buf.size() / sizeof(T);
 }
 
 template<typename T>
-T *persistentMPI
+T *pmpi
 ::send_buf() {
   return reinterpret_cast<T *>(&_buf[0]);
 } 
 
 template<typename T>
-T *persistentMPI
+T *pmpi
 ::recv_buf() {
   return reinterpret_cast<T *>(&_buf[0]);
 } 

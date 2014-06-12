@@ -10,7 +10,7 @@
 
 #define DIMM_H
 
-namespace OF {
+namespace ofuse {
 
   template<typename floatT, typename uintT, typename HashFun>
   class dimm {

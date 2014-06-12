@@ -8,7 +8,7 @@
 #include<mpi.h>
 #include<vector>
 
-namespace OF {
+namespace ofuse {
 
   /*! \brief Unstructured Communication Schedule **/
   template<typename uintT>

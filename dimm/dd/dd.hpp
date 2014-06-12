@@ -9,7 +9,7 @@
 #include "plan.hpp"
 #include <vector>
 
-namespace OF {
+namespace ofuse {
 
   /// The distributed directory class
   template<typename T, typename uintT, typename HashFun>
@@ -30,7 +30,7 @@ namespace OF {
     void setup_migrate
     (
       dd_plan<T> &plan,
-      persistentMPI &pmpi,
+      pmpi &my_pmpi,
       T *recv_buf
     );
     /// Read elements from DD using list
@@ -78,7 +78,7 @@ namespace OF {
     int tot_send_size = 0;
     std::vector<int> global_size( comm_sz * comm_sz ),
                      recv_size( comm_sz );
-    persistentMPI pmpi( comm_sz );
+    pmpi my_pmpi( comm_sz );
     /// Create send sizes
     for( int i = 0; i < comm_sz; ++i )
       recv_size[i] = plan.recv_offsets()[i+1] - plan.recv_offsets()[i];
@@ -111,7 +111,7 @@ namespace OF {
         (
           &plan.recv_list()[ plan.recv_offsets()[i] ],
           plan.recv_offsets()[i+1] - plan.recv_offsets()[i],
-          MPI_INT, i, my_rank, _mpi_comm, &pmpi.send_reqs()[i]
+          MPI_INT, i, my_rank, _mpi_comm, &my_pmpi.send_reqs()[i]
         );
       /// Recv the list of lids to Send to Recv Ranks
       if( ( plan.send_offsets()[i+1]  - plan.send_offsets()[i] ) > 0 )
@@ -119,10 +119,10 @@ namespace OF {
         (
           &plan.send_list()[ plan.send_offsets()[i] ],
           plan.send_offsets()[i+1] - plan.send_offsets()[i],
-          MPI_INT, i, i, _mpi_comm, &pmpi.recv_reqs()[i]
+          MPI_INT, i, i, _mpi_comm, &my_pmpi.recv_reqs()[i]
         );
     } /// End of if i != my_rank condition
-    pmpi.wait();
+    my_pmpi.wait();
   }
 
   template<typename T, typename uintT, typename HashFun>
@@ -190,7 +190,7 @@ namespace OF {
   ::setup_migrate
   (
     dd_plan<T> &plan,
-    persistentMPI &pmpi,
+    pmpi &my_pmpi,
     T *recv_buf
   )
   {

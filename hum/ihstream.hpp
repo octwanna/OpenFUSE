@@ -11,7 +11,7 @@
 #include "types.hpp"
 #include <vector>
 
-namespace OF {
+namespace ofuse {
   template<typename floatT, typename uintT, typename HashFun>
   class dimm;
   template<typename floatT, typename uintT, typename HashFun>
@@ -33,10 +33,10 @@ class ihstream {
   friend class nodeStreamer;
 
   template<typename floatT, typename uintT, typename HashFun>
-  friend class OF::dimm;
+  friend class ofuse::dimm;
 
   template<typename floatT, typename uintT, typename HashFun>
-  friend class OF::cdimm;
+  friend class ofuse::cdimm;
 
   friend class patchInfo;
 

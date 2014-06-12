@@ -8,7 +8,7 @@
 
 #include <sys/time.h>
 
-namespace OF {
+namespace ofuse {
 
   class mpi_time {
 

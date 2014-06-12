@@ -7,7 +7,7 @@
 
 #define CELL_DIMM_H
 
-namespace OF {
+namespace ofuse {
 
   template<typename floatT, typename uintT, typename HashFun>
   class cdimm : public dimm<floatT, uintT, HashFun> {
