@@ -1,4 +1,4 @@
-/*! \file DDCommPlan.h
+/*! \file dd_plan.hpp
 **        Unstructured communication plan
 **/
 #ifndef DD_COMM_PLAN_H
