@@ -45,7 +45,7 @@ namespace ofuse {
     elapsed = timer.stop() * 1.0e-3;
 
     /// Print statistics
-    if (this->_face_lr_dd.Rank() == 0) {
+    if (this->_face_lr_dd.rank() == 0) {
       bytes_read = (sizeof (_cell_face_dd[0]) + sizeof (_cell_cell_dd[0])) * this->_hum_in.nCell();
       bytes_read /= 1024.0 * 1024.0; // Bytes to MB
       std::cerr << "Totally " << bytes_read << " MB read in " << elapsed << " s\n";
@@ -77,8 +77,8 @@ namespace ofuse {
     this->_hum_in. template read< cell<uintT>, H5TCell<uintT> >
       (
       &_cell_face_dd[0], cellFaceCache,
-      _cell_face_dd.Start(), 1,
-      _cell_face_dd.Size()
+      _cell_face_dd.start(), 1,
+      _cell_face_dd.size()
       );
     /// Cell-cell cache
     cellCellCache.push_back(hum::cellCacheLink[ hum::PRIMARY ]);
@@ -86,8 +86,8 @@ namespace ofuse {
     this->_hum_in. template read< cell<uintT>, H5TCell<uintT> >
       (
       &_cell_cell_dd[0], cellFaceCache,
-      _cell_cell_dd.Start(), 1,
-      _cell_cell_dd.Size()
+      _cell_cell_dd.start(), 1,
+      _cell_cell_dd.size()
       );
   }
 

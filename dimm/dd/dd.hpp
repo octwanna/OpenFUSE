@@ -58,7 +58,7 @@ namespace ofuse {
   dd<T, uintT, HashFun>
   ::dd( size_t size, MPI_Comm &comm )
   : HashFun( size, comm ),
-    _data( this->Size() ),
+    _data( this->size() ),
     _mpi_comm(comm)
   { /* empty */ }
 
@@ -73,7 +73,7 @@ namespace ofuse {
   void dd<T, uintT, HashFun>
   ::SendSchedFromRecvSched( dd_plan<uintT> &plan ){
     assert( plan.is_empty() );
-    int comm_sz = this->CommSize(), my_rank = this->Rank();
+    int comm_sz = this->comm_size(), my_rank = this->rank();
     /// Create send size array and do gather
     int tot_send_size = 0;
     std::vector<int> global_size( comm_sz * comm_sz ),
@@ -105,7 +105,7 @@ namespace ofuse {
       plan.send_offsets()[i+1] += plan.send_offsets()[i];
     /// Step 3 : Communicate Recv list to form the send list
     for( int i = 0; i < comm_sz; ++i ) {
-      /// Send the list of lids to Send to Recv Ranks
+      /// Send the list of lids to Send to Recv ranks
       if( ( plan.recv_offsets()[i+1] - plan.recv_offsets()[i] ) > 0 )
         MPI_Isend
         (
@@ -113,7 +113,7 @@ namespace ofuse {
           plan.recv_offsets()[i+1] - plan.recv_offsets()[i],
           MPI_INT, i, my_rank, _mpi_comm, &my_pmpi.send_reqs()[i]
         );
-      /// Recv the list of lids to Send to Recv Ranks
+      /// Recv the list of lids to Send to Recv ranks
       if( ( plan.send_offsets()[i+1]  - plan.send_offsets()[i] ) > 0 )
         MPI_Irecv
         (
@@ -178,7 +178,7 @@ namespace ofuse {
     plan.recv_list().resize( list.size() );
 //    std::copy( plan.RecvList().begin(), plan.RecvList().end(), list.begin() );
     for( size_t i = 0; i < list.size(); ++i ) {
-      int proc_id = this->WhatProcID( plan.recv_list()[i] );
+      int proc_id = this->pid( plan.recv_list()[i] );
       plan.recv_offsets()[ proc_id + 1 ]++;
       plan.recv_list()[i] -= this->Start( proc_id );
     }

@@ -16,22 +16,22 @@ class roundRobin {
   /// Query functions
   /// Checks if the id belongs to this distribution
   template<typename uintT>
-  inline bool BelongsToDist( const uintT &id );
+  inline bool in_dist( const uintT &id );
   /// Get the proc id given the gid
   template<typename uintT>
-  inline int WhatProcID( const uintT &id );
+  inline int pid( const uintT &id );
 
   /// Data access functions 
-  inline const size_t &Start() const;
-  inline const size_t &End() const;
-  inline size_t Start( size_t proc_id );
-  inline size_t End( size_t proc_id );
-  inline size_t StartGID( size_t id );
-  inline size_t EndGID( size_t id );
-  inline const size_t &Size() const;
-  inline size_t Size( int proc_id ) const;
-  inline const int &Rank() const;
-  inline const int &CommSize() const;
+  inline const size_t &start() const;
+  inline const size_t &end() const;
+  inline size_t start( size_t proc_id );
+  inline size_t end( size_t proc_id );
+  inline size_t start_gid( size_t id );
+  inline size_t end_gid( size_t id );
+  inline const size_t &size() const;
+  inline size_t size( int proc_id ) const;
+  inline const int &rank() const;
+  inline const int &comm_size() const;
 
   private:
   size_t _threshold, _residue,
@@ -68,19 +68,19 @@ roundRobin
   if( unsigned(_rank) < _residue ) _end++;
   _local_size = _end - _start;
 #if 0
-  std::cerr << "Start : " << Start() << "\n";
-  std::cerr << "End   : " << End() << "\n";
+  std::cerr << "start : " << start() << "\n";
+  std::cerr << "end   : " << end() << "\n";
 #endif
 }
 
 const size_t &roundRobin
-::Start() const
+::start() const
 {
   return _start;
 }
 
 size_t roundRobin
-::Start( size_t proc_id )
+::start( size_t proc_id )
 {
   return ( proc_id < _residue ) ?
          proc_id * ( _entity_per_proc + 1 ) :
@@ -88,7 +88,7 @@ size_t roundRobin
 }
 
 size_t roundRobin
-::StartGID( size_t id )
+::start_gid( size_t id )
 {
   return ( id < _threshold ) ?
          ( id / ( _entity_per_proc + 1 ) ) * ( _entity_per_proc + 1 ) :
@@ -96,13 +96,13 @@ size_t roundRobin
 }
 
 const size_t &roundRobin
-::End() const
+::end() const
 {
   return _end;
 }
 
 size_t roundRobin
-::End( size_t proc_id )
+::end( size_t proc_id )
 {
   return ( proc_id < _residue ) ?
          ( proc_id + 1 ) * ( _entity_per_proc + 1 ) :
@@ -110,7 +110,7 @@ size_t roundRobin
 }
 
 size_t roundRobin
-::EndGID( size_t id )
+::end_gid( size_t id )
 {
   return ( id < _threshold ) ?
          ( id / ( _entity_per_proc + 1 ) + 1 ) * ( _entity_per_proc + 1 ) :
@@ -118,32 +118,32 @@ size_t roundRobin
 }
 
 const size_t &roundRobin
-::Size() const
+::size() const
 {
   return _local_size;
 }
 
 size_t roundRobin
-::Size( int proc_id ) const
+::size( int proc_id ) const
 {
   return ( proc_id < _residue ) ? ( _entity_per_proc + 1 ): _entity_per_proc;
 }
 
 const int &roundRobin
-::Rank() const
+::rank() const
 {
   return _rank;
 }
 
 const int &roundRobin
-::CommSize() const
+::comm_size() const
 {
   return _comm_size;
 }
 
 template <typename uintT>
 bool roundRobin
-::BelongsToDist( const uintT &id )
+::in_dist( const uintT &id )
 {
   return ( id >= _start &&
            id < _end );
@@ -151,7 +151,7 @@ bool roundRobin
 
 template <typename uintT>
 int roundRobin
-::WhatProcID( const uintT &id )
+::pid( const uintT &id )
 {
   return ( id < _threshold ) ?
          ( id / ( _entity_per_proc + 1 ) ) :
