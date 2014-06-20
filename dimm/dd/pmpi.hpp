@@ -8,7 +8,7 @@
 
 #define PERSISTENT_MPI_H
 
-/*! \brief All persistent MPI related stuff goes here like 
+/*! \brief All persistent MPI related stuff goes here like
 **         the send/recv buffers, mpi requests and stats
 */
 class pmpi {
@@ -42,15 +42,15 @@ class pmpi {
   /// Get the send buffer as a type T array
   template<typename T>
   inline T *recv_buf();
-  
-  private: 
+
+  private:
   /// MPI_Request objects
   std::vector<MPI_Request> _send_req,
                            _recv_req;
   /// MPI_Status objects
   std::vector<MPI_Status>  _send_stat,
                            _recv_stat;
- 
+
   /// The send/recv buffer
   std::vector<char> _buf;
 
@@ -69,7 +69,7 @@ pmpi
 pmpi
 ::~pmpi() {
   free_reqs();
-} 
+}
 
 void pmpi
 ::wait()
@@ -139,7 +139,7 @@ void pmpi
 ::resize( size_t counts ) {
   if( counts * sizeof(T) > _buf.size() )
     _buf.resize( counts * sizeof(T) );
-  if( _buf.size() != 0 && counts == 0 ) 
+  if( _buf.size() != 0 && counts == 0 )
     _buf.clear();
 }
 
@@ -153,13 +153,13 @@ template<typename T>
 T *pmpi
 ::send_buf() {
   return reinterpret_cast<T *>(&_buf[0]);
-} 
+}
 
 template<typename T>
 T *pmpi
 ::recv_buf() {
   return reinterpret_cast<T *>(&_buf[0]);
-} 
+}
 
 #endif
 
