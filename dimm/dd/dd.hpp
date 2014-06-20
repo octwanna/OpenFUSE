@@ -1,5 +1,5 @@
 /** \file dd.hpp
-**        Distributed Directory structre using hash tables
+**        Distributed Directory structure using hash tables
 **/
 #ifndef DISTRIBUTED_DIRECTORY_H
 
@@ -21,10 +21,10 @@ namespace ofuse {
     dd( size_t size, MPI_Comm &comm );
     /// Access operator
     inline T &operator[]( size_t id );
-    /// Form the recv schedule given the send schedule
-    void RecvSchedFromSendSched( dd_plan<uintT> &plan );
-    /// Form the send schedule given the recv schedule
-    void SendSchedFromRecvSched( dd_plan<uintT> &plan );
+    /// Form the receive schedule given the send schedule
+    void build_recv_plan( dd_plan<uintT> &plan );
+    /// Form the send schedule given the receive schedule
+    void build_send_plan( dd_plan<uintT> &plan );
     /// Send data copied to persistentMPI buffer
     /// and receive contiguously in _data array
     void setup_migrate
@@ -33,17 +33,8 @@ namespace ofuse {
       pmpi &my_pmpi,
       T *recv_buf
     );
-    /// Read elements from DD using list
-    template<typename ListT>
-    void read( ListT &list, T *recv );
-    /// Read elements from DD using list
-    template<typename ListT>
-    void read( ListT &list, std::vector<T> &recv );
-    /// Read elements from DD using plan
-    void read( dd_plan<uintT> &plan, T *recv );
-    /// Read elements from DD using plan
-    void read( dd_plan<uintT> &plan, std::vector<T> &recv );
-    /// Convert the list of gids to data movement plan
+
+    /// Convert the list of global ids to data movement plan
     template<typename ListT>
     void list_to_plan( ListT &list, dd_plan<uintT> &plan);
  
@@ -71,7 +62,7 @@ namespace ofuse {
 
   template<typename T, typename uintT, typename HashFun>
   void dd<T, uintT, HashFun>
-  ::SendSchedFromRecvSched( dd_plan<uintT> &plan ){
+  ::build_send_plan( dd_plan<uintT> &plan ){
     assert( plan.is_empty() );
     int comm_sz = this->comm_size(), my_rank = this->rank();
     /// Create send size array and do gather
@@ -90,7 +81,7 @@ namespace ofuse {
       _mpi_comm
     );
     recv_size.clear();
-    /// Step 2 : Allocate enough sizes for the recv
+    /// Step 2 : Allocate enough sizes for the receive
     ///          to get the send list from send rank
     for( int i = 0; i < comm_sz; ++i ) {
       int send_size = global_size[ my_rank + i * comm_sz ];
@@ -103,9 +94,9 @@ namespace ofuse {
     /// Calculate the offsets
     for( int i = 0; i < comm_sz; ++i )
       plan.send_offsets()[i+1] += plan.send_offsets()[i];
-    /// Step 3 : Communicate Recv list to form the send list
+    /// Step 3 : Communicate receive list to form the send list
     for( int i = 0; i < comm_sz; ++i ) {
-      /// Send the list of lids to Send to Recv ranks
+      /// Send the list of lids to Send to receive ranks
       if( ( plan.recv_offsets()[i+1] - plan.recv_offsets()[i] ) > 0 )
         MPI_Isend
         (
@@ -113,7 +104,7 @@ namespace ofuse {
           plan.recv_offsets()[i+1] - plan.recv_offsets()[i],
           MPI_INT, i, my_rank, _mpi_comm, &my_pmpi.send_reqs()[i]
         );
-      /// Recv the list of lids to Send to Recv ranks
+      /// Recv the list of lids to Send to receive ranks
       if( ( plan.send_offsets()[i+1]  - plan.send_offsets()[i] ) > 0 )
         MPI_Irecv
         (
@@ -127,46 +118,11 @@ namespace ofuse {
 
   template<typename T, typename uintT, typename HashFun>
   void dd<T, uintT, HashFun>
-  ::RecvSchedFromSendSched( dd_plan<uintT> &plan ) {
+  ::build_recv_plan( dd_plan<uintT> &plan ) {
     assert( plan.is_empty() );
     plan.swap();
-    SendSchedFromRecvSched( plan );
+    build_send_plan( plan );
     plan.swap();
-  }
-
-  /// Read elements from DD using list
-  template<typename T, typename uintT, typename HashFun>
-  template<typename ListT>
-  void dd<T, uintT, HashFun>
-  ::read( ListT &list, T *recv )
-  {
-    dd_plan<uintT> plan( list.size() );
-    list_to_plan( list, plan );
-    
-  }
-
-  /// Read elements from DD using list
-  template<typename T, typename uintT, typename HashFun>
-  template<typename ListT>
-  void dd<T, uintT, HashFun>
-  ::read( ListT &list, std::vector<T> &recv )
-  {
-
-  }
-
-  /// Read elements from DD using plan
-  template<typename T, typename uintT, typename HashFun>
-  void dd<T, uintT, HashFun>
-  ::read( dd_plan<uintT> &plan, T *recv ){
-
-  } 
-
-  /// Read elements from DD using plan
-  template<typename T, typename uintT, typename HashFun>
-  void dd<T, uintT, HashFun>
-  ::read( dd_plan<uintT> &plan, std::vector<T> &recv )
-  {
-
   }
 
   template<typename T, typename uintT, typename HashFun>
@@ -174,7 +130,7 @@ namespace ofuse {
   void dd<T, uintT, HashFun>
   ::list_to_plan( ListT &list, dd_plan<uintT> &plan )
   {
-   plan.is_empty();
+    plan.is_empty();
     plan.recv_list().resize( list.size() );
 //    std::copy( plan.RecvList().begin(), plan.RecvList().end(), list.begin() );
     for( size_t i = 0; i < list.size(); ++i ) {
@@ -182,7 +138,6 @@ namespace ofuse {
       plan.recv_offsets()[ proc_id + 1 ]++;
       plan.recv_list()[i] -= this->Start( proc_id );
     }
-
   }
 
   template<typename T, typename uintT, typename HashFun>
