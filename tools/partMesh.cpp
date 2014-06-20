@@ -11,7 +11,7 @@ int main( int nargs, char *args[] ) {
     ofuse::dimm<double, uint32_t, roundRobin> dimm( "WingStore.hub", comm );  
   }
   {
-    ofuse::cdimm<double, uint32_t, roundRobin> cdimm( "WingStore.hub", comm );
+    //ofuse::cdimm<double, uint32_t, roundRobin> cdimm( "WingStore.hub", comm );
   }
   MPI_Finalize();
   return 0; 
