@@ -11,7 +11,7 @@ class roundRobin {
   public:
   /// Default constructor
   roundRobin();
-  /// 
+  ///
   roundRobin( size_t size, MPI_Comm &comm );
   /// Query functions
   /// Checks if the id belongs to this distribution
@@ -21,7 +21,7 @@ class roundRobin {
   template<typename uintT>
   inline int pid( const uintT &id );
 
-  /// Data access functions 
+  /// Data access functions
   inline const size_t &start() const;
   inline const size_t &end() const;
   inline size_t start( size_t proc_id );
@@ -38,7 +38,7 @@ class roundRobin {
          _entity_per_proc,
          _global_size, _local_size;
   int _rank, _comm_size;
-  size_t _start, _end;  
+  size_t _start, _end;
 
 };
 
