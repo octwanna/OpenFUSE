@@ -22,7 +22,7 @@ namespace ofuse {
 
     protected:
     /// HUB handle
-    ihstream _hum_in; 
+    ihstream _hum_in;
     /// The mpi communicator
     MPI_Comm _mpi_comm;
     /// The mesh face-nodes DD
@@ -32,16 +32,16 @@ namespace ofuse {
     /// The mesh node distribution
     dd< node<floatT>, uintT, HashFun > _node_dd;
     /// The cell hash function
-    HashFun _cell_hash;
+    dd< cell<uintT>, uintT, HashFun > _cell_dd;
     /// Face communicator objects
     dd_plan<uintT> _face_plan;
 
     protected:
     void read_nodes();
     void read_faces();
-    void set_face_plan( dd_plan<uintT> &face_plan );
+    void get_face_plan();
     void close();
-   
+
   };
 
   /// Class Implementation
@@ -53,7 +53,7 @@ namespace ofuse {
     _face_dd( _hum_in.nFace(), comm ),
     _face_lr_dd( _hum_in.nFace(), comm ),
     _node_dd( _hum_in.nNode(), comm ),
-    _cell_hash( _hum_in.nCell(), comm ),
+    _cell_dd( _hum_in.nCell(), comm ),
     _face_plan( _face_dd.comm_size() )
   {
     mpi_time timer(comm);
@@ -62,7 +62,7 @@ namespace ofuse {
     read_nodes();
     read_faces();
     elapsed = timer.stop() * 1.0e-3;
-    
+
     /// Print statistics
     if( _face_lr_dd.rank() == 0 ) {
       bytes_read = ( sizeof(_face_dd[0]) +
@@ -74,6 +74,21 @@ namespace ofuse {
       std::cerr << "Read bandwidth = " << bytes_read / elapsed << " MB/s\n";
     }
     close();
+#if 1
+    
+    std::stringstream cat;
+    cat << "schedule_list_" << _face_dd.rank() << ".dat";
+    std::ofstream fout(cat.str().c_str());
+    for( uintT i = 0; i < _face_lr_dd.comm_size(); ++i ) {
+      if( _face_plan.send_offsets()[i+1] - _face_plan.send_offsets()[i] > 0 )
+        fout << "proc " << _face_dd.rank() << " send to "  << i 
+          << " list of size " << _face_plan.send_offsets()[i+1] - _face_plan.send_offsets()[i] << "\n";
+      if( _face_plan.recv_offsets()[i+1] - _face_plan.recv_offsets()[i] > 0 )
+        fout << "proc " << _face_dd.rank() << " recvs from "  << i 
+          << " list of size " << _face_plan.recv_offsets()[i+1] - _face_plan.recv_offsets()[i] << "\n";
+    }
+    fout.close();
+#endif    
   }
 
   /// Class Implementation
@@ -85,11 +100,11 @@ namespace ofuse {
     _hum_in.read< node<floatT>, H5TNode<floatT> >
     (
       &_node_dd[0],
-      _node_dd.start(), 
+      _node_dd.start(),
       1, _node_dd.size()
     );
   }
- 
+
   template<typename floatT, typename uintT, typename HashFun>
   void dimm<floatT, uintT, HashFun>
   ::read_faces()
@@ -98,73 +113,87 @@ namespace ofuse {
     _hum_in.read< leftRight<uintT>, H5TLeftRight<uintT> >
     (
       &_face_lr_dd[0],
-      _face_lr_dd.start(), 
+      _face_lr_dd.start(),
       1, _face_lr_dd.size()
     );
     /// Face Node info
     _hum_in.read< face<uintT>, H5TFace<uintT> >
     (
       &_face_dd[0],
-      _face_dd.start(), 
+      _face_dd.start(),
       1, _face_dd.size()
     );
     /// Create the cell face plan
     _face_plan.clear_list();
     /// Use the face L/R cell information
     /// and ceate the face plan object
-    set_face_plan( _face_plan );
+    get_face_plan();
     /// Invert the Send schedule to Recv schedule
-    _face_dd.RecvSchedFromSendSched( _face_plan  ); 
+    _face_dd.build_recv_plan( _face_plan  );
   }
- 
+
+  #define INC_MY_RANK 0 // disable feature
   template<typename floatT, typename uintT, typename HashFun>
   void dimm<floatT, uintT, HashFun>
-  ::set_face_plan( dd_plan<uintT> &face_plan )
+  ::get_face_plan()
   {
-    face_plan.resize( _face_lr_dd.size() );
+    _face_plan.resize( _face_lr_dd.size() );
     for( uintT i = 0; i < _face_lr_dd.size(); ++i ) {
-      int left  = _cell_hash.pid( _face_lr_dd[i].left );
-      int right = _cell_hash.pid( _face_lr_dd[i].right );
+      int left  = _cell_dd.pid( _face_lr_dd[i].left );
+      int right = _cell_dd.pid( _face_lr_dd[i].right );
       /// Add to face send plan
+#if INC_MY_RANK
       if( left != _face_lr_dd.rank() )
-        face_plan.send_offsets()[ left+1 ]++;
+#endif
+        _face_plan.send_offsets()[ left+1 ]++;
       if( i + _face_lr_dd.start() < _hum_in.nInternalFace() )
+#if INC_MY_RANK
         if( right != _face_lr_dd.rank() )
-          face_plan.send_offsets()[ right+1 ]++;
+#endif
+          _face_plan.send_offsets()[ right+1 ]++;
     }
     /// Form offset send list offset array
     for( uintT i = 0; i < _face_lr_dd.comm_size(); ++i )
-      face_plan.send_offsets()[i+1] += face_plan.send_offsets()[i];
+      _face_plan.send_offsets()[i+1] += _face_plan.send_offsets()[i];
     /// Allocate memory for send list
-    face_plan.send_list().resize( face_plan.send_offsets()[ _face_lr_dd.comm_size() ] );
+    _face_plan.send_list().resize( _face_plan.send_offsets()[ _face_lr_dd.comm_size() ] );
     /// Counter to track addition into face send list
-    std::vector<int> count_offset( face_plan.send_offsets() );
+    std::vector<int> count_offset( _face_plan.send_offsets() );
     for( uintT i = 0; i < _face_lr_dd.size(); ++i ) {
-      int left  = _cell_hash.pid( _face_lr_dd[i].left );
-      int right = _cell_hash.pid( _face_lr_dd[i].right );
+      int left  = _cell_dd.pid( _face_lr_dd[i].left );
+      int right = _cell_dd.pid( _face_lr_dd[i].right );
       /// Add to face send plan
+#if INC_MY_RANK
       if( left != _face_lr_dd.rank() ) {
-        face_plan.send_list()[ count_offset[ left ] ] = i + _face_lr_dd.start();
+#endif        
+        _face_plan.send_list()[ count_offset[ left ] ] = i + _face_lr_dd.start();
         count_offset[ left ]++;
+#if INC_MY_RANK
       }
+#endif
       if( i + _face_lr_dd.start() < _hum_in.nInternalFace() ) {
+#if INC_MY_RANK
         if( right != _face_lr_dd.rank() ) {
-          face_plan.send_list()[ count_offset[ right ] ] = i + _face_lr_dd.start();
+#endif
+          _face_plan.send_list()[ count_offset[ right ] ] = i + _face_lr_dd.start();
           count_offset[ right ]++;
+#if INC_MY_RANK
         }
+#endif
       }
     }
     for( uintT i = 0; i < _face_lr_dd.comm_size(); ++i )
-      assert( count_offset[i] == face_plan.send_offsets()[i+1] );
+      assert( count_offset[i] == _face_plan.send_offsets()[i+1] );
   }
- 
+  #undef INC_MY_RANK
+  
   template<typename floatT, typename uintT, typename HashFun>
   void dimm<floatT, uintT, HashFun>
   ::close()
   {
     _hum_in.close();
   }
- 
+
 } // End of FUSE namespace
 
 #endif
