@@ -17,7 +17,7 @@ namespace ofuse {
     public:
     /// No constructor
     dd();
-    /// First constructor using MPI comm
+    /// First constructor using MPI communicator
     dd( size_t size, MPI_Comm &comm );
     /// Access operator
     inline T &operator[]( size_t id );
@@ -25,6 +25,10 @@ namespace ofuse {
     void build_recv_plan( dd_plan<uintT> &plan );
     /// Form the send schedule given the receive schedule
     void build_send_plan( dd_plan<uintT> &plan );
+    /// Read a set of arrays given the plan, data array and persistent communicator
+    void read( dd_plan<uintT> &plan, std::vector<T> &data, pmpi &my_pmpi );
+    /// Read a set of arrays given the plan and data array
+    void read( dd_plan<uintT> &plan, std::vector<T> &data );
     /// Send data copied to persistentMPI buffer
     /// and receive contiguously in _data array
     void setup_migrate
@@ -34,7 +38,7 @@ namespace ofuse {
       T *recv_buf
     );
 
-    /// Convert the list of global ids to data movement plan
+    /// Convert the list of global indices to data movement plan
     template<typename ListT>
     void list_to_plan( ListT &list, dd_plan<uintT> &plan);
  
@@ -104,7 +108,7 @@ namespace ofuse {
           plan.recv_offsets()[i+1] - plan.recv_offsets()[i],
           MPI_INT, i, my_rank, _mpi_comm, &my_pmpi.send_reqs()[i]
         );
-      /// Recv the list of lids to Send to receive ranks
+      /// Receive the list of lids to Send to receive ranks
       if( ( plan.send_offsets()[i+1]  - plan.send_offsets()[i] ) > 0 )
         MPI_Irecv
         (
@@ -124,7 +128,103 @@ namespace ofuse {
     build_send_plan( plan );
     plan.swap();
   }
-
+  
+  template<typename T, typename uintT, typename HashFun>
+  void dd<T, uintT, HashFun>
+  ::read( dd_plan<uintT> &plan, std::vector<T> &recv_buf, pmpi &my_pmpi ) {
+    if( plan.is_empty() ) return;
+    int T_size_char = sizeof(T);
+    /// Copy my processor data
+    recv_buf.resize( plan.recv_list().size() );
+    for( size_t i = plan.recv_offsets()[ this->rank() ];
+                i < plan.recv_offsets()[ this->rank() + 1 ]; ++i )
+      memcpy( &recv_buf[i], &_data[plan.recv_list()[i]], sizeof(T) );
+    my_pmpi.resize<T>( plan.send_list().size() );
+    /// Copy data to send buffer
+    for( int i = 0; i < my_pmpi.buf_size<T>(); ++i )
+      my_pmpi.send_buf<T>()[i] = _data[ plan.send_list()[i] ];
+    /// Now send/receive from ranks other than my_rank
+    for( int i = 0; i < this->comm_size(); ++i ) {
+      if( i != this->rank() ) {
+        /// Non-blocking send
+        if( ( plan.send_offsets()[i+1] - plan.send_offsets()[i] ) > 0 ) {
+          MPI_Send_init
+          (
+            &my_pmpi.send_buf<T>()[ plan.send_offsets()[i] ],
+            ( plan.send_offsets()[i+1] - plan.send_offsets()[i] ) * T_size_char,
+            MPI_CHAR,
+            i,
+            this->rank(),
+            _mpi_comm,
+            &my_pmpi.send_reqs()[i]
+          );
+        }
+        /// Blocking receive
+        if( ( plan.recv_offsets()[i+1] - plan.recv_offsets()[i] ) > 0 ) {
+          MPI_Recv_init
+          (
+            &recv_buf[ plan.recv_offsets()[i] ],
+            ( plan.recv_offsets()[i+1] - plan.recv_offsets()[i] ) * T_size_char,
+            MPI_CHAR,
+            i,
+            i,
+            _mpi_comm,
+            &my_pmpi.recv_reqs()[i]
+          );
+        }
+      }
+    }
+  }
+  
+  
+  template<typename T, typename uintT, typename HashFun>
+  void dd<T, uintT, HashFun>
+  ::read( dd_plan<uintT> &plan, std::vector<T> &recv_buf ) {
+    if( plan.is_empty() ) return;
+    int T_size_char = sizeof(T);
+    pmpi my_pmpi( this->comm_size() );
+    /// Copy my processor data
+    recv_buf.resize( plan.recv_list().size() );
+    for( size_t i = plan.recv_offsets()[ this->rank() ];
+                i < plan.recv_offsets()[ this->rank() + 1 ]; ++i )
+      memcpy( &recv_buf[i], &_data[plan.recv_list()[i]], sizeof(T) );
+    my_pmpi.resize<T>( plan.send_list().size() );
+    /// Copy data to send buffer
+    for( int i = 0; i < my_pmpi.buf_size<T>(); ++i )
+      my_pmpi.send_buf<T>()[i] = _data[ plan.send_list()[i] ];
+    /// Now send/receive from ranks other than my_rank
+    for( int i = 0; i < this->comm_size(); ++i ) {
+      if( i != this->rank() ) {
+        /// Non-blocking send
+        if( ( plan.send_offsets()[i+1] - plan.send_offsets()[i] ) > 0 ) {
+          MPI_Send_init
+          (
+            &my_pmpi.send_buf<T>()[ plan.send_offsets()[i] ],
+            ( plan.send_offsets()[i+1] - plan.send_offsets()[i] ) * T_size_char,
+            MPI_CHAR,
+            i,
+            this->rank(),
+            _mpi_comm,
+            &my_pmpi.send_reqs()[i]
+          );
+        }
+        /// Blocking receive
+        if( ( plan.recv_offsets()[i+1] - plan.recv_offsets()[i] ) > 0 ) {
+          MPI_Recv_init
+          (
+            &recv_buf[ plan.recv_offsets()[i] ],
+            ( plan.recv_offsets()[i+1] - plan.recv_offsets()[i] ) * T_size_char,
+            MPI_CHAR,
+            i,
+            i,
+            _mpi_comm,
+            &my_pmpi.recv_reqs()[i]
+          );
+        }
+      }
+    }
+  }
+  
   template<typename T, typename uintT, typename HashFun>
   template<typename ListT>
   void dd<T, uintT, HashFun>

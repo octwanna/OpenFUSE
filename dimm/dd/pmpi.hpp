@@ -9,7 +9,7 @@
 #define PERSISTENT_MPI_H
 
 /*! \brief All persistent MPI related stuff goes here like
-**         the send/recv buffers, mpi requests and stats
+**         the send/receive buffers, MPI requests and status
 */
 class pmpi {
   public:
@@ -21,14 +21,14 @@ class pmpi {
   ~pmpi();
   /// Wait for MPI request to complete
   void wait();
-  /// Start the persistent send/recv req
+  /// Start the persistent send/receive req
   void start();
   /// Clears the persistent MPI requests
   void free_reqs();
-  ///  Resize the send/recv buffers
+  ///  Resize the send/receive buffers
   template<typename T>
   void resize( size_t counts );
-  ///  Resize the send/recv buffers
+  ///  Resize the send/receive buffers
   template<typename T>
   size_t size();
   /// Data Access Functions
@@ -42,6 +42,9 @@ class pmpi {
   /// Get the send buffer as a type T array
   template<typename T>
   inline T *recv_buf();
+  ///  Resize the send/receive buffers
+  template<typename T>
+  size_t buf_size();
 
   private:
   /// MPI_Request objects
@@ -51,7 +54,7 @@ class pmpi {
   std::vector<MPI_Status>  _send_stat,
                            _recv_stat;
 
-  /// The send/recv buffer
+  /// The send/receive buffer
   std::vector<char> _buf;
 
 };
@@ -68,13 +71,14 @@ pmpi
 
 pmpi
 ::~pmpi() {
+  wait();
   free_reqs();
 }
 
 void pmpi
 ::wait()
 {
-  /// Recv Request
+  /// Receive Request
   for( unsigned i = 0; i < _recv_req.size(); ++i )
     if( _recv_req[i] != MPI_REQUEST_NULL )
       MPI_Wait( &_recv_req[i], &_recv_stat[i] );
@@ -87,7 +91,7 @@ void pmpi
 void pmpi
 ::start()
 {
-  /// Recv Request
+  /// Receive Request
   for( unsigned i = 0; i < _recv_req.size(); ++i )
     if( _recv_req[i] != MPI_REQUEST_NULL )
       MPI_Start( &_recv_req[i] );
@@ -100,7 +104,7 @@ void pmpi
 void pmpi
 ::free_reqs()
 {
-  /// Recv Request
+  /// Receive Request
   for( unsigned i = 0; i < _recv_req.size(); ++i )
     if( _recv_req[i] != MPI_REQUEST_NULL )
       MPI_Request_free( &_recv_req[i] );
@@ -108,6 +112,9 @@ void pmpi
   for( unsigned i = 0; i < _send_req.size(); ++i )
     if( _send_req[i] != MPI_REQUEST_NULL )
       MPI_Request_free( &_send_req[i] );
+  /// Fill with NULL requests
+  std::fill( _send_req.begin(), _send_req.end(), MPI_REQUEST_NULL );
+  std::fill( _recv_req.begin(), _recv_req.end(), MPI_REQUEST_NULL );
 }
 
 std::vector<MPI_Request> &pmpi
@@ -159,6 +166,12 @@ template<typename T>
 T *pmpi
 ::recv_buf() {
   return reinterpret_cast<T *>(&_buf[0]);
+}
+
+template<typename T>
+size_t pmpi
+::buf_size() {
+  return _buf.size() / sizeof(T);  
 }
 
 #endif
